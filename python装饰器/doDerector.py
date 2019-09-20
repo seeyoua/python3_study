@@ -123,7 +123,7 @@ f(1,'abc',[1,2,3,4])
 func_sig = signature(f)
 print(func_sig.bind(1,"2",[1,2,4]).arguments)
 
-
+print(f.__dict__)
 
 
 

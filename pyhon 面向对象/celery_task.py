@@ -6,7 +6,8 @@ from flask import Flask
 app = Flask(__name__)
 
 def make_celery(app):
-    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    print(type(app.import_name))
+    celery = Celery("celery_task", broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task
     class ContextTask(TaskBase):
@@ -34,12 +35,14 @@ celery = make_celery(app)
 
 
 @celery.task()
-def add_together(a, b):
-    return a + b
+def add_together(*args):
+    return args[0]+args[1]
+
+
 
 @app.route('/add')
 def task():
-    result = add_together.delay(1,2)
+    result = add_together.apply_async((1,2))
     print(result.wait())
     return "ok"
 
